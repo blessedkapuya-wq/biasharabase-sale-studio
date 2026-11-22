@@ -1,0 +1,6 @@
+{
+  "name": "Kestrel — Sales Page Template Studio",
+  "description": "Design, customize, and export conversion-focused sales page templates across B2B agency, hardware launch, SaaS, and OEM manufacturing archetypes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
