@@ -368,7 +368,7 @@ export function ExportCodeModal({
                 <span>Free to preview · Instant unlock after Selar checkout</span>
               </div>
               <p className="text-xs text-[#475569] leading-relaxed">
-                Purchase <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong> once on Selar ($24 USD / TSh 67,500) to activate unlimited HTML exports on up to 3 devices.
+                Purchase <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong> once on Selar ($24 USD / TSh 67,500) to download standalone <span className="font-mono">index.html</span> / Publish ZIP files you own forever (up to 3 devices). Hosting is separate—upload to any free or paid web host.
               </p>
               <a
                 href={safeSelarUrl}
@@ -527,9 +527,9 @@ export function ExportCodeModal({
                   </p>
                 </div>
                 <div>
-                  <div className="font-semibold text-[#0F172A] mb-0.5">02. Drop onto any web host</div>
+                  <div className="font-semibold text-[#0F172A] mb-0.5">02. Upload to a separate host</div>
                   <p className="text-[#475569]">
-                    Drag the ZIP onto Netlify Drop, Cloudflare Pages, or cPanel to put your page online in minutes.
+                    You own the exported file, and hosting is separate: drag the ZIP onto free Netlify Drop, Cloudflare Pages, or cPanel to go live.
                   </p>
                 </div>
                 <div>
@@ -539,9 +539,7 @@ export function ExportCodeModal({
                   </p>
                 </div>
               </div>
-              {(/kestrel-engine\.com|acme\.com|meridian-advisory\.com|bauer-precision\.com|ledgercheck\.io/i.test(
-                template.leadDestinationValue
-              ) ||
+              {(/\.example$/i.test(template.leadDestinationValue.trim()) ||
                 (!template.checkoutUrl?.trim() &&
                   !template.mobileMoneyNote?.trim() &&
                   !template.whatsappOrderNumber?.trim())) && (

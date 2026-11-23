@@ -65,7 +65,7 @@ export function HomeOverview({ templates, onStartTemplate }: HomeOverviewProps) 
               </div>
               <div className="flex items-center justify-between gap-4 pt-4 border-t border-[#DCE4EE]">
                 <span className="text-xs text-[#64748B]">
-                  Sample business: {validatorTemplate.brandName}
+                  Demo sample: {validatorTemplate.brandName}
                 </span>
                 <button
                   type="button"
@@ -80,14 +80,14 @@ export function HomeOverview({ templates, onStartTemplate }: HomeOverviewProps) 
           </article>
         </div>
 
-        {/* Stage 2: Sell a Product, Service, or B2B Offer */}
+        {/* Stage 2: Sell a Digital Product, Service, or Workshop */}
         <div>
           <div className="mb-4">
             <p className="text-xs font-medium text-[#1E40AF] mb-1">
-              Stage 2 · Sell a Product or Service
+              Stage 2 · Sell Your Offer
             </p>
             <h2 className="font-display-studio text-xl font-semibold text-[#0F172A]">
-              Selling an existing product, service, or B2B offer
+              Selling a digital product, service package, or live workshop
             </h2>
           </div>
 

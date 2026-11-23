@@ -143,7 +143,7 @@ export function TemplateGalleryView({
 
                   <div className="px-6 py-4 border-t border-[#DCE4EE] bg-[#EDF2F7] flex items-center justify-between gap-4">
                     <span className="text-xs text-[#64748B] truncate">
-                      Sample brand: {tpl.brandName}
+                      Demo sample: {tpl.brandName}
                     </span>
                     <button
                       type="button"

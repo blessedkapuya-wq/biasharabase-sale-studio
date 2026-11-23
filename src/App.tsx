@@ -346,18 +346,13 @@ export default function App() {
           {/* Zone 3: 1 Primary Action */}
           <div className="shrink-0">
             {view === 'sales' ? (
-              <a
-                href={
-                  /^https?:\/\//i.test(selarUrl.trim())
-                    ? selarUrl.trim()
-                    : 'https://selar.com/n57778lu4q'
-                }
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => setView('pick')}
                 className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-[#0F766E] rounded-lg hover:bg-[#115E59] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
-                Get Studio — $24 / TSh 67,500
-              </a>
+                Preview Builder Free
+              </button>
             ) : (
               <button
                 type="button"
@@ -508,11 +503,11 @@ export default function App() {
             )}
 
             <div className="flex-1 min-w-0 w-full space-y-2.5">
-              <div className="flex items-center justify-between gap-4 px-1 text-xs text-[#475569]">
+              <div className="flex flex-wrap items-center justify-between gap-4 px-1 text-xs text-[#475569]">
                 <span>
-                  Live Preview · Sample text for {activeTemplate.brandName}
+                  Demonstration Template · Sample offer & pricing for <strong className="font-medium text-[#0F172A]">{activeTemplate.brandName}</strong>
                 </span>
-                <span>Changes on the left update this page immediately</span>
+                <span>Edit on the left to replace sample text with your own offer</span>
               </div>
               <div
                 className={`${viewportContainerClass} rounded-xl border border-[#CFD9E4] overflow-hidden shadow-xs transition-all duration-200`}

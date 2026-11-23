@@ -9,8 +9,8 @@ interface FinishedPageExampleShowcaseProps {
 
 const EXAMPLE_TABS = [
   { id: 'quiet-editorial-kit', label: 'Digital Product' },
-  { id: 'quiet-productized-service', label: 'Service & Consulting' },
-  { id: 'quiet-b2b-technical', label: 'B2B Quote' },
+  { id: 'quiet-productized-service', label: 'Service Package' },
+  { id: 'quiet-b2b-technical', label: 'Workshop & Cohort' },
   { id: 'validator-smoke-test', label: 'Idea Test' },
 ] as const;
 
@@ -29,13 +29,13 @@ export function FinishedPageExampleShowcase({
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold text-[#0F766E] mb-2">
-            LIVE DEMO — Example sales page created with Page Studio
+            DEMONSTRATION TEMPLATES — Non-purchasable example pages
           </p>
           <h2 className="font-display-studio text-2xl md:text-3xl font-semibold tracking-tight text-balance text-[#0F172A] mb-3">
             See a complete finished sales page before you buy.
           </h2>
           <p className="text-base text-[#475569] leading-relaxed">
-            Scroll through the real desktop and mobile result below—complete with hero, Before vs. After contrast, proof, pricing, FAQ, and inquiry form. Everything shown is a sample business you replace with your own offer.
+            Scroll through the real desktop and mobile result below—complete with hero, Before vs. After contrast, proof, pricing, FAQ, and inquiry form. All offers, brands, and sample prices shown are demonstrations that you replace with your own.
           </p>
         </div>
 
@@ -95,6 +95,7 @@ export function FinishedPageExampleShowcase({
                 id: `example-desktop-${activeTemplate.id}`,
               }}
               viewportMode="tablet"
+              demoMode
             />
           </div>
         </div>
@@ -108,7 +109,7 @@ export function FinishedPageExampleShowcase({
                 <span>Mobile Result</span>
               </div>
               <span className="text-[11px] text-[#94A3B8] truncate">
-                {activeTemplate.brandName}
+                {activeTemplate.brandName} (Demo)
               </span>
             </div>
             <div className="h-[540px] overflow-y-auto">
@@ -118,6 +119,7 @@ export function FinishedPageExampleShowcase({
                   id: `example-mobile-${activeTemplate.id}`,
                 }}
                 viewportMode="mobile"
+                demoMode
               />
             </div>
           </div>

@@ -1,8 +1,8 @@
 export type TemplateCategory =
   | 'Idea Test'
   | 'Digital Product'
-  | 'Productized Service'
-  | 'B2B Technical';
+  | 'Service Package'
+  | 'Workshop & Cohort';
 
 export type BiasharaProductLink = 'Test a New Idea' | 'Sell an Offer';
 

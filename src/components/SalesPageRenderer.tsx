@@ -15,6 +15,7 @@ interface SalesPageRendererProps {
   template: SalesTemplate;
   viewportMode: 'desktop' | 'tablet' | 'mobile';
   onSelectSection?: (sectionId: SectionId) => void;
+  demoMode?: boolean;
 }
 
 const FONT_CLASS_MAP: Record<SalesTemplate['fontPairing'], string> = {
@@ -29,10 +30,12 @@ export function SalesPageRenderer({
   template,
   viewportMode,
   onSelectSection,
+  demoMode = false,
 }: SalesPageRendererProps) {
   const [billingIndex, setBillingIndex] = useState<0 | 1>(0);
   const [selectedTierName, setSelectedTierName] = useState<string>('');
   const [openFaqId, setOpenFaqId] = useState<string | null>(template.faqs[0]?.id || null);
+  const [demoActionMessage, setDemoActionMessage] = useState<string>('');
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formNotes, setFormNotes] = useState('');
@@ -78,7 +81,17 @@ export function SalesPageRenderer({
     }
   };
 
-  const handleChooseTier = (tierName: string) => {
+  const handleDemoButtonClick = (label: string) => {
+    setDemoActionMessage(
+      `Demo preview only ("${label}"): No real purchase was made. When you build your own page, this button links to your own Selar checkout or inquiry form.`
+    );
+  };
+
+  const handleChooseTier = (tierName: string, ctaLabel?: string) => {
+    if (demoMode) {
+      handleDemoButtonClick(ctaLabel || tierName);
+      return;
+    }
     setSelectedTierName(tierName);
     setSubmittedRecord(null);
     captureRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -153,7 +166,19 @@ export function SalesPageRenderer({
                     template.heroVariant === 'editorial-centered' ? 'justify-center' : ''
                   }`}
                 >
-                  {template.checkoutUrl?.trim() ? (
+                  {demoMode ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDemoButtonClick(template.primaryCtaLabel);
+                      }}
+                      style={{ backgroundColor: template.accentColor }}
+                      className="px-6 py-3 text-sm font-semibold text-white rounded-lg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 whitespace-nowrap shrink-0 cursor-pointer"
+                    >
+                      {template.primaryCtaLabel}
+                    </button>
+                  ) : template.checkoutUrl?.trim() ? (
                     <a
                       href={template.checkoutUrl.trim()}
                       target="_blank"
@@ -451,7 +476,29 @@ export function SalesPageRenderer({
                         ))}
                       </ul>
                     </div>
-                    {template.checkoutUrl?.trim() ? (
+                    {demoMode ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDemoButtonClick(tier.ctaLabel);
+                        }}
+                        style={
+                          tier.highlighted
+                            ? { backgroundColor: template.accentColor, color: '#FFFFFF' }
+                            : undefined
+                        }
+                        className={`w-full py-2.5 px-4 text-sm font-semibold rounded-lg transition-opacity duration-150 hover:opacity-90 whitespace-nowrap cursor-pointer ${
+                          tier.highlighted
+                            ? ''
+                            : isDark
+                              ? 'bg-[#20232A] text-white hover:bg-[#2A2E37]'
+                              : 'bg-[#E2E8F0] text-[#0F172A] hover:bg-[#CBD5E1]'
+                        }`}
+                      >
+                        {tier.ctaLabel}
+                      </button>
+                    ) : template.checkoutUrl?.trim() ? (
                       <a
                         href={template.checkoutUrl.trim()}
                         target="_blank"
@@ -477,7 +524,7 @@ export function SalesPageRenderer({
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleChooseTier(tier.name);
+                          handleChooseTier(tier.name, tier.ctaLabel);
                         }}
                         style={
                           tier.highlighted || isSelected
@@ -631,7 +678,10 @@ export function SalesPageRenderer({
                       </h3>
                     </div>
                     <p className={`text-sm ${mutedTextClass} leading-relaxed mb-5`}>
-                      Inquiry preview logged for {submittedRecord.tier} ({submittedRecord.email}). On your exported webpage, submissions route via{' '}
+                      {demoMode
+                        ? 'Demo inquiry preview only — no real message or order was sent. '
+                        : `Inquiry preview logged for ${submittedRecord.tier} (${submittedRecord.email}). `}
+                      On your exported webpage, submissions route via{' '}
                       <span className="font-medium">
                         {template.leadDestinationType === 'formspree'
                           ? 'Formspree'
@@ -742,6 +792,33 @@ export function SalesPageRenderer({
     <div
       className={`tpl-body transition-colors duration-200 ${FONT_CLASS_MAP[template.fontPairing]} ${canvasClass}`}
     >
+      {demoMode && (
+        <div className="px-4 py-2 bg-[#0F172A] text-[#F8FAFC] text-[11px] flex flex-wrap items-center justify-between gap-2 border-b border-[#1E293B]">
+          <span className="font-semibold">
+            DEMONSTRATION SAMPLE — Example offer & pricing shown (not Page Studio checkout)
+          </span>
+          <span className="text-[#94A3B8]">
+            Buttons below are safe previews
+          </span>
+        </div>
+      )}
+
+      {demoMode && demoActionMessage && (
+        <div
+          role="status"
+          className="sticky top-0 z-30 px-4 py-2.5 bg-[#CCFBF1] text-[#0F172A] border-b border-[#0F766E] text-xs flex items-center justify-between gap-3"
+        >
+          <span>{demoActionMessage}</span>
+          <button
+            type="button"
+            onClick={() => setDemoActionMessage('')}
+            className="text-[11px] font-semibold underline underline-offset-2 shrink-0 cursor-pointer"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Template Internal 3-Zone Top Navigation */}
       <header
         className={`max-w-6xl mx-auto px-6 py-5 flex items-center justify-between gap-8 border-b ${subtleBorderClass}`}
@@ -778,7 +855,16 @@ export function SalesPageRenderer({
           </nav>
         )}
 
-        {template.checkoutUrl?.trim() ? (
+        {demoMode ? (
+          <button
+            type="button"
+            onClick={() => handleDemoButtonClick(template.primaryCtaLabel)}
+            style={{ backgroundColor: template.accentColor }}
+            className="px-4 py-2 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap shrink-0 cursor-pointer"
+          >
+            {template.primaryCtaLabel}
+          </button>
+        ) : template.checkoutUrl?.trim() ? (
           <a
             href={template.checkoutUrl.trim()}
             target="_blank"
@@ -800,13 +886,27 @@ export function SalesPageRenderer({
         )}
       </header>
 
-      <main>
+      <div>
         {template.sections.filter((s) => s.enabled).map((s) => renderSection(s.id))}
-      </main>
+      </div>
 
       {(() => {
         const waDigits = (template.whatsappOrderNumber || '').replace(/[^0-9]/g, '');
         if (!waDigits) return null;
+        if (demoMode) {
+          return (
+            <div className="sticky bottom-4 flex justify-end px-6 pb-4 pointer-events-none">
+              <button
+                type="button"
+                onClick={() => handleDemoButtonClick('Order on WhatsApp')}
+                className="pointer-events-auto inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#15803D] hover:bg-[#166534] rounded-lg shadow-lg transition-colors cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                <span>Order on WhatsApp</span>
+              </button>
+            </div>
+          );
+        }
         const waHref = `https://wa.me/${waDigits}?text=${encodeURIComponent(
           `Hi, I'm interested in ${template.brandName}`
         )}`;

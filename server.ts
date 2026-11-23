@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import express from 'express';
 import type { Request, Response } from 'express';
@@ -281,7 +282,7 @@ function buildWelcomePdfBuffer(studioUrl: string, accessCode: string): Buffer {
     [
       'Step 2  Pick a Proven Template',
       'Choose "Test a New Idea" (Pre-Order & Waitlist) to validate demand, or choose',
-      '"Sell an Offer" for Digital Products, Consulting Services, or B2B Quote pages.',
+      '"Sell an Offer" for Digital Products, Service Packages, or Workshop & Cohort pages.',
     ],
     [
       'Step 3  Enter Your Offer & Connect Inquiries',
@@ -370,6 +371,10 @@ async function startServer() {
   const app = express();
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: true }));
+
+  app.get('/favicon.ico', (_req: Request, res: Response) => {
+    res.status(204).end();
+  });
 
   // Selar "New Sale" Webhook Receiver
   app.post('/api/selar-webhook', async (req: Request, res: Response) => {
@@ -790,6 +795,7 @@ async function startServer() {
     }
   );
 
+  const httpServer = http.createServer(app);
   const isProduction = process.env.NODE_ENV === 'production';
   const distDir = path.resolve(process.cwd(), 'dist');
 
@@ -801,13 +807,18 @@ async function startServer() {
   } else {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+        allowedHosts: true,
+        ws: { server: httpServer },
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`BiasharaBase Page Studio running on http://0.0.0.0:${PORT}`);
   });
 }

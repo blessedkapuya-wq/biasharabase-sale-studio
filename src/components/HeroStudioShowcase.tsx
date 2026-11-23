@@ -9,12 +9,13 @@ interface HeroStudioShowcaseProps {
 const SHOWCASE_ORDER = [
   { id: 'quiet-editorial-kit', shortLabel: 'Digital Product' },
   { id: 'quiet-productized-service', shortLabel: 'Service' },
-  { id: 'quiet-b2b-technical', shortLabel: 'B2B Quote' },
+  { id: 'quiet-b2b-technical', shortLabel: 'Workshop' },
   { id: 'validator-smoke-test', shortLabel: 'Idea Test' },
 ] as const;
 
 export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps) {
   const [selectedId, setSelectedId] = useState<string>(SHOWCASE_ORDER[0].id);
+  const [demoNotice, setDemoNotice] = useState(false);
 
   const activeTemplate =
     INITIAL_TEMPLATES.find((tpl) => tpl.id === selectedId) ||
@@ -29,10 +30,10 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
       {/* Unmistakable Demo Label Separating Example Product From Page Studio ($24 / TSh 67,500) */}
       <div className="px-4 py-2 bg-[#0F172A] text-[#F8FAFC] flex flex-wrap items-center justify-between gap-2 text-[11px]">
         <span className="font-semibold tracking-tight">
-          LIVE DEMO — Builder preview showing a sales page template
+          DEMONSTRATION ONLY — Sample offer inside builder
         </span>
         <span className="text-[#94A3B8]">
-          Sample offer shown (not Page Studio pricing)
+          Sample price shown (Page Studio is $24 / TSh 67,500)
         </span>
       </div>
 
@@ -58,7 +59,10 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setSelectedId(tab.id)}
+                onClick={() => {
+                  setSelectedId(tab.id);
+                  setDemoNotice(false);
+                }}
                 className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                   active
                     ? 'bg-[#FAFCFE] text-[#0F172A] shadow-xs'
@@ -87,10 +91,10 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
           <div className="hidden sm:flex sm:col-span-4 flex-col justify-between p-3 bg-[#EDF2F7] border-r border-[#CFD9E4] text-[10px]">
             <div className="space-y-2.5">
               <div className="font-semibold text-[#0F172A] tracking-tight">
-                Edit in Browser
+                Sample Fields (Demo)
               </div>
               <div className="space-y-1">
-                <div className="text-[#64748B]">Sample Business</div>
+                <div className="text-[#64748B]">Sample Brand</div>
                 <div className="px-2 py-1 rounded border border-[#CFD9E4] bg-[#FAFCFE] text-[#0F172A] font-medium truncate">
                   {activeTemplate.brandName}
                 </div>
@@ -118,7 +122,7 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
             </div>
 
             <div className="pt-2 border-t border-[#DCE4EE] text-[#475569]">
-              Export standalone HTML ($24 / TSh 67,500)
+              Download HTML ($24 / TSh 67,500)
             </div>
           </div>
 
@@ -131,14 +135,14 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
                   {activeTemplate.brandName} (Demo)
                 </span>
                 <span className="text-[9px] font-medium text-[#64748B] shrink-0">
-                  Sample preview
+                  Non-purchasable sample
                 </span>
               </div>
 
               {/* Mini Hero */}
               <div className="pr-2 sm:pr-16 space-y-2">
                 <div className="text-[9px] font-semibold uppercase tracking-wide text-[#0F766E]">
-                  Demo · {activeTemplate.category}
+                  Demo Template · {activeTemplate.category}
                 </div>
                 <div className="font-display-studio text-sm font-semibold text-[#0F172A] leading-snug">
                   {activeTemplate.heroHeadline}
@@ -147,16 +151,23 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
                   {activeTemplate.heroSubheadline}
                 </p>
                 <div className="pt-1 flex flex-wrap items-center gap-2">
-                  <span
-                    className="inline-block px-2.5 py-1 text-[10px] font-semibold text-white rounded"
+                  <button
+                    type="button"
+                    onClick={() => setDemoNotice((v) => !v)}
+                    className="inline-block px-2.5 py-1 text-[10px] font-semibold text-white rounded cursor-pointer hover:opacity-90"
                     style={{ backgroundColor: accent }}
                   >
                     {activeTemplate.primaryCtaLabel}
-                  </span>
+                  </button>
                   <span className="text-[10px] font-medium text-[#64748B] tabular-nums">
-                    Sample product: {primaryTier?.monthlyPrice || ''}
+                    Sample price: {primaryTier?.monthlyPrice || ''}
                   </span>
                 </div>
+                {demoNotice && (
+                  <p className="text-[10px] text-[#0F766E] bg-[#F0FDFA] border border-[#99F6E4] rounded px-2 py-1 leading-snug">
+                    Sample button preview only — no real purchase. On your exported page, this links to your own checkout or form.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -201,7 +212,7 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
         >
           <div className="px-2.5 py-1.5 bg-[#0F172A] text-white flex items-center justify-between text-[8px]">
             <span className="font-semibold truncate">{activeTemplate.brandName}</span>
-            <span className="text-[#94A3B8]">Mobile</span>
+            <span className="text-[#94A3B8]">Demo</span>
           </div>
           <div className="p-2.5 space-y-1.5">
             <div className="text-[9px] font-semibold text-[#0F172A] leading-tight line-clamp-3">
@@ -231,7 +242,7 @@ export function HeroStudioShowcase({ onLaunchBuilder }: HeroStudioShowcaseProps)
       {/* Bottom Interactive Prompt */}
       <div className="px-4 py-2.5 bg-[#F4F7FA] border-t border-[#CFD9E4] flex items-center justify-between gap-3 text-xs">
         <span className="text-[#475569] truncate">
-          Demo template: <strong className="font-semibold text-[#0F172A]">{activeTemplate.name}</strong>
+          Demo template: <strong className="font-semibold text-[#0F172A]">{activeTemplate.name}</strong> (sample data)
         </span>
         <button
           type="button"

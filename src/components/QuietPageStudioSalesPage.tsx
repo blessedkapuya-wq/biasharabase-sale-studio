@@ -85,61 +85,36 @@ export function QuietPageStudioSalesPage({
           <div className="lg:col-span-6 flex flex-col justify-center">
             <p className="text-sm mb-3.5">
               <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong>
-              <span className="text-[#0F766E] font-medium"> · Browser Sales Page Builder</span>
+              <span className="text-[#0F766E] font-medium"> · For Digital Product & Service Sellers</span>
             </p>
-            <h1 className="font-display-studio text-[clamp(2.25rem,3.6vw,3.35rem)] font-semibold tracking-tight leading-[1.08] text-balance text-[#0F172A] mb-4">
+            <h1 className="font-display-studio text-[clamp(2.25rem,3.6vw,3.35rem)] font-semibold tracking-tight leading-[1.08] text-balance text-[#0F172A] mb-5">
               {tpl.heroHeadline}
             </h1>
-            <p className="text-base text-[#475569] leading-relaxed mb-5 max-w-xl">
+            <p className="text-base md:text-lg text-[#475569] leading-relaxed mb-8 max-w-xl">
               {tpl.heroSubheadline}
             </p>
 
-            <div className="p-4 rounded-xl border border-[#CFD9E4] bg-[#F4F7FA] mb-6 max-w-xl">
-              <div className="text-xs font-semibold uppercase tracking-wide text-[#0F766E] mb-2.5">
-                What you get
-              </div>
-              <ul className="space-y-2 text-sm text-[#0F172A]">
-                <li className="flex items-start gap-2.5">
-                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
-                  <span>4 editable templates: Digital Product, Service, B2B Quote, plus Idea Test</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
-                  <span>Edit text, price, button, photo, and WhatsApp link in your browser</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
-                  <span>Download your page and upload it to any host, with publishing steps included</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
-                  <span>Instant access after Selar checkout, with a 30-day money-back guarantee</span>
-                </li>
-              </ul>
-            </div>
-
             <div className="flex flex-wrap items-center gap-3.5">
-              <a
-                href={safeSelarHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg shadow-sm transition-colors whitespace-nowrap shrink-0"
-              >
-                <span>Get BiasharaBase Page Studio — $24 USD (TSh 67,500)</span>
-                <ExternalLink className="w-4 h-4" aria-hidden="true" />
-              </a>
               <button
                 type="button"
                 onClick={() => onLaunchBuilder()}
-                className="inline-flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg shadow-sm transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <span>Preview Builder Free</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
+              <a
+                href={safeSelarHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap shrink-0"
+              >
+                <span>Unlock Downloads on Selar — $24 USD (TSh 67,500)</span>
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+              </a>
             </div>
-            <p className="text-xs text-[#475569] mt-3.5 leading-relaxed">
-              <strong className="font-semibold text-[#0F172A]">Free to preview:</strong> pick any template, edit text & prices, and test desktop/mobile views.{' '}
-              <strong className="font-semibold text-[#0F172A]">$24 USD (TSh 67,500) one-time:</strong> unlocks HTML download & publishing steps.
+            <p className="text-xs text-[#475569] mt-4 leading-relaxed">
+              {tpl.secondaryNote}
             </p>
           </div>
 
@@ -222,7 +197,7 @@ export function QuietPageStudioSalesPage({
             <ul className="space-y-2.5 text-sm text-[#475569]">
               <li className="flex items-start gap-2.5">
                 <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#475569]" aria-hidden="true" />
-                <span>Choose from all 4 templates (Digital Product, Service, B2B Quote, Idea Test)</span>
+                <span>Choose from all 4 templates (Digital Product, Service Package, Workshop, Idea Test)</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#475569]" aria-hidden="true" />
@@ -256,6 +231,32 @@ export function QuietPageStudioSalesPage({
                 <span>Unlock exports right after Selar checkout using your receipt Email + Order ID on up to 3 devices (30-day money-back guarantee)</span>
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Clear Distinction: Owning Your Exported Webpage vs. Hosting It Online */}
+        <div className="p-7 rounded-xl border border-[#CFD9E4] bg-[#FAFCFE] mb-8 grid md:grid-cols-2 gap-8">
+          <div>
+            <div className="text-xs font-semibold text-[#0F766E] mb-1.5">
+              1. What you buy and own forever
+            </div>
+            <h3 className="font-display-studio text-base font-semibold text-[#0F172A] mb-2">
+              An exported HTML webpage you control
+            </h3>
+            <p className="text-sm text-[#475569] leading-relaxed">
+              Your $24 USD (TSh 67,500) one-time license lets you build and export unlimited standalone <span className="font-mono text-xs text-[#0F172A]">index.html</span> files and Publish ZIPs. You keep the code, photos, and pages permanently with zero ongoing fees to BiasharaBase.
+            </p>
+          </div>
+          <div className="md:border-l md:border-[#DCE4EE] md:pl-8">
+            <div className="text-xs font-semibold text-[#475569] mb-1.5">
+              2. How hosting works (separate from Page Studio)
+            </div>
+            <h3 className="font-display-studio text-base font-semibold text-[#0F172A] mb-2">
+              Upload to any free or paid host for a live link
+            </h3>
+            <p className="text-sm text-[#475569] leading-relaxed">
+              BiasharaBase Page Studio is a page builder and exporter—it does <strong className="font-semibold text-[#0F172A]">not</strong> host your website or include a custom domain. To put your downloaded ZIP online, drag it onto a free static host like Netlify Drop or Cloudflare Pages (or your existing cPanel) in minutes using our included guide.
+            </p>
           </div>
         </div>
 
@@ -461,23 +462,23 @@ export function QuietPageStudioSalesPage({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <a
-              href={safeSelarHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg shadow-sm transition-colors whitespace-nowrap"
-            >
-              <span>Get BiasharaBase Page Studio — $24 USD (TSh 67,500)</span>
-              <ExternalLink className="w-4 h-4" aria-hidden="true" />
-            </a>
             <button
               type="button"
               onClick={() => onLaunchBuilder()}
-              className="inline-flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg shadow-sm transition-colors whitespace-nowrap cursor-pointer"
             >
               <span>Preview Builder Free</span>
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </button>
+            <a
+              href={safeSelarHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap"
+            >
+              <span>Unlock on Selar — $24 USD (TSh 67,500)</span>
+              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+            </a>
           </div>
         </div>
       </section>
