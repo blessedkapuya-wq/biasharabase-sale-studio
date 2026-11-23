@@ -20,7 +20,7 @@ export const QUIET_PAGE_STUDIO_TEMPLATE: SalesTemplate = {
     'Choose a template, add your product details, and preview your sales page in minutes. Pay only when you\'re ready to download.',
   primaryCtaLabel: 'Preview Builder Free',
   secondaryNote:
-    'Free to edit & preview · $24 USD (TSh 67,500) once on Selar unlocks HTML download (hosting is separate).',
+    'Free to edit & preview · $24 USD (TSh 67,500) one-time via Selar (Card, M-Pesa, Mobile Money) unlocks HTML download. Hosting is separate.',
   heroImage: '/src/assets/images/studio_builder_preview_1795435351159.jpg',
   heroImageAlt:
     'BiasharaBase Page Studio builder showing the browser editor alongside a desktop and mobile sales page template.',
@@ -129,7 +129,7 @@ export const QUIET_PAGE_STUDIO_TEMPLATE: SalesTemplate = {
         'Downloadable Publish ZIP (index.html) + step-by-step hosting guide',
         'Unlock right after Selar payment with receipt Email + Order ID (3 devices)',
       ],
-      ctaLabel: 'Get Instant Access on Selar — $24 USD (TSh 67,500)',
+      ctaLabel: 'Download Your Finished Page — $24',
     },
   ],
   guaranteeTitle: '30-Day "Build Your Page First" Guarantee',

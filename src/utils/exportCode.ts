@@ -289,16 +289,16 @@ export function generateHtmlExport(template: SalesTemplate, resolvedImageSrc?: s
           <div class="grid sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-medium ${mutedClass} mb-1.5">Full name</label>
-              <input id="lead-name" name="name" type="text" required placeholder="Jordan Mercer" class="w-full px-3.5 py-2.5 text-sm rounded-lg border ${borderClass} bg-transparent" />
+              <input id="lead-name" name="name" type="text" required placeholder="Amina Hassan" class="w-full px-3.5 py-2.5 text-sm rounded-lg border ${borderClass} bg-transparent" />
             </div>
             <div>
-              <label class="block text-xs font-medium ${mutedClass} mb-1.5">Work email</label>
-              <input id="lead-email" name="email" type="email" required placeholder="jordan@company.com" class="w-full px-3.5 py-2.5 text-sm rounded-lg border ${borderClass} bg-transparent" />
+              <label class="block text-xs font-medium ${mutedClass} mb-1.5">Email address</label>
+              <input id="lead-email" name="email" type="email" required placeholder="amina@email.com" class="w-full px-3.5 py-2.5 text-sm rounded-lg border ${borderClass} bg-transparent" />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-medium ${mutedClass} mb-1.5">Project details or questions</label>
-            <textarea id="lead-notes" name="message" rows="3" placeholder="Tell us what you need and your timeline..." class="w-full px-3.5 py-2.5 text-sm rounded-lg border ${borderClass} bg-transparent"></textarea>
+            <label class="block text-xs font-medium ${mutedClass} mb-1.5">Questions or notes</label>
+            <textarea id="lead-notes" name="message" rows="3" placeholder="Ask a question or share what you are looking for..." class="w-full px-3.5 py-2.5 text-sm rounded-lg border ${borderClass} bg-transparent"></textarea>
           </div>
           <p id="lead-error" class="text-xs font-medium text-red-600 hidden"></p>
           <p id="lead-success" class="text-sm font-medium hidden" style="color:${isDark ? '#FBBF24' : template.accentColor};"></p>

@@ -109,7 +109,7 @@ export function QuietPageStudioSalesPage({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap shrink-0"
               >
-                <span>Unlock Downloads on Selar — $24 USD (TSh 67,500)</span>
+                <span>Download Your Finished Page — $24</span>
                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
               </a>
             </div>
@@ -373,11 +373,11 @@ export function QuietPageStudioSalesPage({
                 rel="noopener noreferrer"
                 className="w-full py-3.5 px-5 text-sm font-semibold rounded-lg bg-[#0F766E] text-white hover:bg-[#115E59] transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
               >
-                <span>Get Instant Access on Selar — $24 USD (TSh 67,500)</span>
+                <span>Download Your Finished Page — $24</span>
                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
               </a>
               <p className="text-center text-xs text-[#64748B]">
-                Instant download link sent immediately after Selar checkout · 30-day guarantee
+                $24 USD (TSh 67,500) one-time on Selar (Card, M-Pesa, Mobile Money) · 30-day guarantee
               </p>
             </div>
           </div>
@@ -476,7 +476,7 @@ export function QuietPageStudioSalesPage({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap"
             >
-              <span>Unlock on Selar — $24 USD (TSh 67,500)</span>
+              <span>Download Your Finished Page — $24</span>
               <ExternalLink className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>

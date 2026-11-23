@@ -29,7 +29,7 @@ export const INITIAL_TEMPLATES: SalesTemplate[] = [
     category: 'Idea Test',
     productLink: 'Test a New Idea',
     description:
-      'Test if real buyers will pre-order your ebook, template pack, or mini-course before you spend weeks creating it.',
+      'Test if real buyers will pre-order your ebook, template pack, workshop, or starter service before you spend weeks building it.',
     brandName: 'Content Starter Pack',
     trustMarker: '100% Refundable Pre-Order · Only 20 Founding Spots',
     navLinks: ['Why It Matters', 'What You Get', 'Pre-Order', 'Join List'],
@@ -37,7 +37,7 @@ export const INITIAL_TEMPLATES: SalesTemplate[] = [
     surface: 'crisp-light',
     fontPairing: 'outfit-public',
     accentColor: '#0F766E',
-    heroEyebrow: 'For Beginner Creators & Small Shop Owners',
+    heroEyebrow: 'For Beginner Digital Product & Service Sellers',
     heroHeadline: 'Stop guessing what to post—get 30 plug-and-play WhatsApp & Instagram templates.',
     heroSubheadline:
       'Before we finish recording all walkthrough videos, reserve your founding copy at 50% off or join the free early-access list to vote on the niches included.',

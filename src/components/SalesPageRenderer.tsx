@@ -107,7 +107,7 @@ export function SalesPageRenderer({
     }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(trimmedEmail)) {
-      setFormError('Enter a valid email address (e.g. name@company.com).');
+      setFormError('Enter a valid email address (e.g. amina@email.com).');
       return;
     }
     setFormError('');
@@ -721,32 +721,32 @@ export function SalesPageRenderer({
                           type="text"
                           value={formName}
                           onChange={(e) => setFormName(e.target.value)}
-                          placeholder="Jordan Mercer"
+                          placeholder="Amina Hassan"
                           className={`w-full px-3.5 py-2.5 text-sm rounded-lg border outline-none transition-colors ${inputClass}`}
                         />
                       </div>
                       <div>
                         <label className={`block text-xs font-medium mb-1.5 ${mutedTextClass}`}>
-                          Work email
+                          Email address
                         </label>
                         <input
                           type="email"
                           value={formEmail}
                           onChange={(e) => setFormEmail(e.target.value)}
-                          placeholder="jordan@company.com"
+                          placeholder="amina@email.com"
                           className={`w-full px-3.5 py-2.5 text-sm rounded-lg border outline-none transition-colors ${inputClass}`}
                         />
                       </div>
                     </div>
                     <div>
                       <label className={`block text-xs font-medium mb-1.5 ${mutedTextClass}`}>
-                        Project details or questions
+                        Questions or notes
                       </label>
                       <textarea
                         rows={3}
                         value={formNotes}
                         onChange={(e) => setFormNotes(e.target.value)}
-                        placeholder="Share what you need and your target timeline..."
+                        placeholder="Ask a question or share what you are looking for..."
                         className={`w-full px-3.5 py-2.5 text-sm rounded-lg border outline-none transition-colors ${inputClass}`}
                       />
                     </div>

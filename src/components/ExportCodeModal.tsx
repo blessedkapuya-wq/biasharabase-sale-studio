@@ -376,7 +376,7 @@ export function ExportCodeModal({
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 text-xs font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg transition-colors flex items-center justify-center gap-2"
               >
-                <span>Buy on Selar ($24 USD / TSh 67,500) & Unlock</span>
+                <span>Download Your Finished Page — $24</span>
                 <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
               </a>
             </div>

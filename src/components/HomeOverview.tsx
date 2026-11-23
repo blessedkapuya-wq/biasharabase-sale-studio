@@ -57,7 +57,7 @@ export function HomeOverview({ templates, onStartTemplate }: HomeOverviewProps) 
                   {validatorTemplate.name}
                 </h3>
                 <p className="text-sm text-[#475569] leading-relaxed mb-4">
-                  {validatorTemplate.description} Includes a refundable pilot deposit option vs. free waitlist, interview findings, and an instant signup form.
+                  {validatorTemplate.description} Includes a refundable founding pre-order vs. free waitlist, early buyer feedback, and an instant signup form.
                 </p>
                 <div className="text-xs text-[#64748B]">
                   Includes: Top Hero · Before vs. After · Deliverables · Proof · Pricing & Guarantee · FAQ · Inquiry Form
