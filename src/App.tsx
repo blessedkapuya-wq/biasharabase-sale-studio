@@ -49,7 +49,12 @@ export default function App() {
       QUIET_PAGE_STUDIO_TEMPLATE.checkoutUrl || 'https://selar.com/n57778lu4q';
     try {
       const saved = localStorage.getItem(SELAR_URL_STORAGE_KEY)?.trim();
-      if (!saved || saved === 'https://selar.co/' || saved === 'https://selar.co') {
+      if (
+        !saved ||
+        saved === 'https://selar.co/' ||
+        saved === 'https://selar.co' ||
+        saved === 'https://selar.co/your-product'
+      ) {
         return defaultUrl;
       }
       return saved;
@@ -342,17 +347,16 @@ export default function App() {
           <div className="shrink-0">
             {view === 'sales' ? (
               <a
-                href="#qps-pricing"
-                onClick={(e) => {
-                  const el = document.getElementById('qps-pricing');
-                  if (el) {
-                    e.preventDefault();
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
+                href={
+                  /^https?:\/\//i.test(selarUrl.trim())
+                    ? selarUrl.trim()
+                    : 'https://selar.com/n57778lu4q'
+                }
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-[#0F766E] rounded-lg hover:bg-[#115E59] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
-                Get Studio — $39
+                Get Studio — $24 / TSh 67,500
               </a>
             ) : (
               <button

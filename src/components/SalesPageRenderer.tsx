@@ -1,5 +1,13 @@
 import { useState, FormEvent, useRef } from 'react';
-import { Check, AlertCircle, ShieldCheck, ChevronDown, X as XIcon } from 'lucide-react';
+import {
+  Check,
+  AlertCircle,
+  ShieldCheck,
+  ChevronDown,
+  X as XIcon,
+  MessageCircle,
+  Smartphone,
+} from 'lucide-react';
 import { SalesTemplate, SectionId } from '../types/template';
 import { ResilientImage } from './ResilientImage';
 
@@ -492,6 +500,25 @@ export function SalesPageRenderer({
               })}
             </div>
 
+            {/* Optional Direct Mobile Money / Bank Instructions */}
+            {template.mobileMoneyNote?.trim() && (
+              <div className={`p-5 rounded-xl border ${cardSurfaceClass} flex items-start gap-3.5 mb-6`}>
+                <Smartphone
+                  className="w-5 h-5 mt-0.5 shrink-0"
+                  style={{ color: isDark ? '#FBBF24' : template.accentColor }}
+                  aria-hidden="true"
+                />
+                <div>
+                  <h3 className="tpl-display text-sm font-semibold mb-1">
+                    Direct Mobile Money / Bank Payment
+                  </h3>
+                  <p className={`text-sm ${mutedTextClass} leading-relaxed whitespace-pre-line`}>
+                    {template.mobileMoneyNote.trim()}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Risk-Reversal Guarantee Callout */}
             <div className={`p-6 rounded-xl border ${cardSurfaceClass} flex items-start gap-4`}>
               <ShieldCheck
@@ -776,6 +803,27 @@ export function SalesPageRenderer({
       <main>
         {template.sections.filter((s) => s.enabled).map((s) => renderSection(s.id))}
       </main>
+
+      {(() => {
+        const waDigits = (template.whatsappOrderNumber || '').replace(/[^0-9]/g, '');
+        if (!waDigits) return null;
+        const waHref = `https://wa.me/${waDigits}?text=${encodeURIComponent(
+          `Hi, I'm interested in ${template.brandName}`
+        )}`;
+        return (
+          <div className="sticky bottom-4 flex justify-end px-6 pb-4 pointer-events-none">
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pointer-events-auto inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#15803D] hover:bg-[#166534] rounded-lg shadow-lg transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" aria-hidden="true" />
+              <span>Order on WhatsApp</span>
+            </a>
+          </div>
+        );
+      })()}
     </div>
   );
 }

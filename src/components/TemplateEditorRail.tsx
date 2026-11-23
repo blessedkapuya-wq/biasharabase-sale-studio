@@ -354,6 +354,22 @@ export function TemplateEditorRail({
                       className={inputClass}
                     />
                   </div>
+
+                  <div className="pt-2 border-t border-[#DCE4EE]">
+                    <label className="block text-xs font-medium text-[#334155] mb-1">
+                      Floating WhatsApp Order Button (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={template.whatsappOrderNumber || ''}
+                      onChange={(e) => updateField('whatsappOrderNumber', e.target.value)}
+                      placeholder="e.g. 255712345678 (shows chat button)"
+                      className={inputClass}
+                    />
+                    <p className="text-[11px] text-[#64748B] mt-1">
+                      Add your country code + phone number to show a quick WhatsApp order button on the page.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -611,6 +627,19 @@ export function TemplateEditorRail({
                     <p className="text-[11px] text-[#64748B] mt-1">
                       Paste your Selar, Paystack, Stripe, or WhatsApp link. Leave blank to scroll buyers to your inquiry form.
                     </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[#334155] mb-1">
+                      Mobile Money / Lipa Namba Details (Optional)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={template.mobileMoneyNote || ''}
+                      onChange={(e) => updateField('mobileMoneyNote', e.target.value)}
+                      placeholder="e.g. M-Pesa Lipa Namba: 5432109 · Account: Launch Co."
+                      className={inputClass}
+                    />
                   </div>
 
                   <div>

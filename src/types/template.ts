@@ -116,7 +116,9 @@ export interface SalesTemplate {
   captureButtonLabel: string;
   leadDestinationType: LeadDestinationType;
   leadDestinationValue: string;
+  whatsappOrderNumber?: string;
   checkoutUrl?: string;
+  mobileMoneyNote?: string;
   footerLegal: string;
   footerContact: string;
   sections: SectionConfig[];

@@ -270,7 +270,7 @@ function buildWelcomePdfBuffer(studioUrl: string, accessCode: string): Buffer {
   drawText(82, 531, 'One-Click Unlock Link (opens & unlocks automatically):', 10, 'F1', '#475569');
   drawText(82, 514, autoUnlockUrl, 8.0, 'F2', '#0F766E');
 
-  drawText(64, 466, '2. Build & Publish Your Sales Page in 60 Seconds', 13, 'F2', '#0F172A');
+  drawText(64, 466, '2. Create & Publish Your Sales Page Draft in Minutes', 13, 'F2', '#0F172A');
 
   const steps: Array<[string, string, string]> = [
     [
@@ -289,9 +289,9 @@ function buildWelcomePdfBuffer(studioUrl: string, accessCode: string): Buffer {
       'Paste your Selar/Paystack checkout link OR wire the form to Email, Formspree, or WhatsApp.',
     ],
     [
-      'Step 4  Download & Publish Free',
-      'Click "Download HTML" to get one self-contained .html file with your photo inside.',
-      'Rename it to index.html inside a folder and drop it onto Netlify Drop or Cloudflare Pages.',
+      'Step 4  Download Publish ZIP & Go Live',
+      'Click "Download Publish ZIP" to get index.html with your photo and WhatsApp link inside.',
+      'Drag the ZIP directly onto Netlify Drop, Cloudflare Pages, or cPanel—no renaming needed.',
     ],
   ];
 

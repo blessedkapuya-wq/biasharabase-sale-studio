@@ -233,6 +233,14 @@ export function generateHtmlExport(template: SalesTemplate, resolvedImageSrc?: s
         )
         .join('\n      ')}
     </div>
+    ${
+      template.mobileMoneyNote?.trim()
+        ? `<div class="p-5 rounded-xl border ${cardClass} mb-6">
+      <h3 class="text-sm font-semibold mb-1" style="font-family:${fonts.display};">Direct Mobile Money / Bank Payment</h3>
+      <p class="text-sm ${mutedClass} leading-relaxed whitespace-pre-line">${escapeHtml(template.mobileMoneyNote.trim())}</p>
+    </div>`
+        : ''
+    }
     <div class="p-6 rounded-xl border ${cardClass}">
       <h3 class="text-base font-semibold mb-1" style="font-family:${fonts.display};">${escapeHtml(template.guaranteeTitle)}</h3>
       <p class="text-sm ${mutedClass} leading-relaxed">${escapeHtml(template.guaranteeBody)}</p>
@@ -344,6 +352,14 @@ export function generateHtmlExport(template: SalesTemplate, resolvedImageSrc?: s
     <a href="${checkoutHref ? escapeHtml(checkoutHref) : '#capture'}" ${checkoutHref ? 'target="_blank" rel="noopener noreferrer"' : ''} class="px-4 py-2 text-xs font-semibold text-white rounded-lg whitespace-nowrap shrink-0" style="background-color:${template.accentColor};">${escapeHtml(template.primaryCtaLabel)}</a>
   </header>
 ${sectionsMarkup}
+  ${(() => {
+    const waDigits = (template.whatsappOrderNumber || '').replace(/[^0-9]/g, '');
+    if (!waDigits) return '';
+    const waHref = `https://wa.me/${waDigits}?text=${encodeURIComponent(
+      `Hi, I'm interested in ${template.brandName}`
+    )}`;
+    return `<a href="${escapeHtml(waHref)}" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#15803D] hover:bg-[#166534] rounded-lg shadow-lg">Order on WhatsApp</a>`;
+  })()}
   <script>
     (function () {
       var billingBtns = document.querySelectorAll('[data-billing-btn]');

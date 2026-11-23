@@ -10,7 +10,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { QUIET_PAGE_STUDIO_TEMPLATE } from '../data/studioSalesTemplate';
-import { ResilientImage } from './ResilientImage';
+import { HeroStudioShowcase } from './HeroStudioShowcase';
+import { FinishedPageExampleShowcase } from './FinishedPageExampleShowcase';
 
 interface QuietPageStudioSalesPageProps {
   selarUrl: string;
@@ -82,16 +83,40 @@ export function QuietPageStudioSalesPage({
       <section className="max-w-6xl mx-auto px-6 py-14 lg:py-20">
         <div className="grid lg:grid-cols-12 gap-12 items-stretch">
           <div className="lg:col-span-6 flex flex-col justify-center">
-            <p className="text-sm md:text-base mb-4">
+            <p className="text-sm mb-3.5">
               <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong>
-              <span className="text-[#0F766E] font-medium"> · Sales Page & Idea Test Builder</span>
+              <span className="text-[#0F766E] font-medium"> · Browser Sales Page Builder</span>
             </p>
-            <h1 className="font-display-studio text-[clamp(2.25rem,3.8vw,3.5rem)] font-semibold tracking-tight leading-[1.08] text-balance text-[#0F172A] mb-5">
+            <h1 className="font-display-studio text-[clamp(2.25rem,3.6vw,3.35rem)] font-semibold tracking-tight leading-[1.08] text-balance text-[#0F172A] mb-4">
               {tpl.heroHeadline}
             </h1>
-            <p className="text-base md:text-lg text-[#475569] leading-relaxed mb-8 max-w-xl">
+            <p className="text-base text-[#475569] leading-relaxed mb-5 max-w-xl">
               {tpl.heroSubheadline}
             </p>
+
+            <div className="p-4 rounded-xl border border-[#CFD9E4] bg-[#F4F7FA] mb-6 max-w-xl">
+              <div className="text-xs font-semibold uppercase tracking-wide text-[#0F766E] mb-2.5">
+                What you get
+              </div>
+              <ul className="space-y-2 text-sm text-[#0F172A]">
+                <li className="flex items-start gap-2.5">
+                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                  <span>4 editable templates: Digital Product, Service, B2B Quote, plus Idea Test</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                  <span>Edit text, price, button, photo, and WhatsApp link in your browser</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                  <span>Download your page and upload it to any host, with publishing steps included</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                  <span>Instant access after Selar checkout, with a 30-day money-back guarantee</span>
+                </li>
+              </ul>
+            </div>
 
             <div className="flex flex-wrap items-center gap-3.5">
               <a
@@ -100,7 +125,7 @@ export function QuietPageStudioSalesPage({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg shadow-sm transition-colors whitespace-nowrap shrink-0"
               >
-                <span>Get BiasharaBase Page Studio — $39 USD</span>
+                <span>Get BiasharaBase Page Studio — $24 USD (TSh 67,500)</span>
                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
               </a>
               <button
@@ -108,21 +133,18 @@ export function QuietPageStudioSalesPage({
                 onClick={() => onLaunchBuilder()}
                 className="inline-flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
-                <span>Test Builder Free</span>
+                <span>Preview Builder Free</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
-            <p className="text-xs text-[#475569] mt-4">
-              Instant access via Selar (Card, M-Pesa, Bank Transfer) · One-time $39 USD · 30-day money-back guarantee
+            <p className="text-xs text-[#475569] mt-3.5 leading-relaxed">
+              <strong className="font-semibold text-[#0F172A]">Free to preview:</strong> pick any template, edit text & prices, and test desktop/mobile views.{' '}
+              <strong className="font-semibold text-[#0F172A]">$24 USD (TSh 67,500) one-time:</strong> unlocks HTML download & publishing steps.
             </p>
           </div>
 
           <div className="lg:col-span-6">
-            <ResilientImage
-              src={tpl.heroImage}
-              alt={tpl.heroImageAlt}
-              className="w-full lg:h-full min-h-[320px] max-h-[460px] object-cover rounded-xl border border-[#CBD6E2]"
-            />
+            <HeroStudioShowcase onLaunchBuilder={onLaunchBuilder} />
           </div>
         </div>
 
@@ -177,16 +199,67 @@ export function QuietPageStudioSalesPage({
         </div>
       </section>
 
-      {/* Capabilities Bento */}
+      {/* What your $24 unlocks + Verified Free vs. Paid Comparison */}
       <section className="max-w-6xl mx-auto px-6 py-16 border-t border-[#CFD9E4]">
         <div className="max-w-2xl mb-10">
           <h2 className="font-display-studio text-2xl md:text-3xl font-semibold tracking-tight text-balance mb-3">
-            {tpl.capabilitiesHeading}
+            What your $24 USD (TSh 67,500) unlocks
           </h2>
           <p className="text-base text-[#475569] leading-relaxed">
-            {tpl.capabilitiesIntro}
+            Try the editor in your browser for free first. Pay <strong className="font-semibold text-[#0F172A]">$24 USD (TSh 67,500) once</strong> when you are ready to export your finished webpage and put it online.
           </p>
         </div>
+
+        {/* Verified Free vs Paid Distinction */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="p-7 rounded-xl border border-[#CFD9E4] bg-[#F4F7FA]">
+            <div className="text-xs font-semibold text-[#475569] mb-1">
+              Free in your browser ($0 / TSh 0)
+            </div>
+            <h3 className="font-display-studio text-lg font-semibold text-[#0F172A] mb-4">
+              Build and preview before you pay
+            </h3>
+            <ul className="space-y-2.5 text-sm text-[#475569]">
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#475569]" aria-hidden="true" />
+                <span>Choose from all 4 templates (Digital Product, Service, B2B Quote, Idea Test)</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#475569]" aria-hidden="true" />
+                <span>Edit headlines, pricing, photos, FAQs, and WhatsApp or email links</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#475569]" aria-hidden="true" />
+                <span>Preview live across desktop, tablet, and mobile screens</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="p-7 rounded-xl border border-[#0F766E] bg-[#F4F7FA]">
+            <div className="text-xs font-semibold text-[#0F766E] mb-1">
+              Paid access ($24 USD / TSh 67,500 one-time)
+            </div>
+            <h3 className="font-display-studio text-lg font-semibold text-[#0F172A] mb-4">
+              Download, publish, and own your HTML file
+            </h3>
+            <ul className="space-y-2.5 text-sm text-[#0F172A]">
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                <span>Download a publish-ready ZIP (<span className="font-mono text-xs">index.html</span>), copy HTML, and add WhatsApp or Mobile Money details</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                <span>Receive step-by-step instructions to upload to Netlify Drop, Cloudflare Pages, or any web host (hosting is separate—zero monthly fees)</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#0F766E]" aria-hidden="true" />
+                <span>Unlock exports right after Selar checkout using your receipt Email + Order ID on up to 3 devices (30-day money-back guarantee)</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* 4 Deliverables Bento */}
         <div className="grid md:grid-cols-3 gap-6">
           {tpl.capabilities.map((cap) => (
             <div
@@ -208,6 +281,9 @@ export function QuietPageStudioSalesPage({
           ))}
         </div>
       </section>
+
+      {/* Complete Finished Sales Page Example (Desktop + Mobile) */}
+      <FinishedPageExampleShowcase onLaunchBuilder={onLaunchBuilder} />
 
       {/* Proof & Case Studies */}
       <section className="max-w-6xl mx-auto px-6 py-16 border-t border-[#CFD9E4]">
@@ -247,7 +323,7 @@ export function QuietPageStudioSalesPage({
         </div>
       </section>
 
-      {/* Single Clear $39 USD Selar Offer + Guarantee */}
+      {/* Single Clear $24 USD Selar Offer + Guarantee */}
       <section id="qps-pricing" ref={pricingRef} className="max-w-6xl mx-auto px-6 py-16 border-t border-[#CFD9E4]">
         <div className="max-w-2xl mb-10">
           <h2 className="font-display-studio text-2xl md:text-3xl font-semibold tracking-tight text-balance mb-3">
@@ -270,9 +346,12 @@ export function QuietPageStudioSalesPage({
                 </span>
               </div>
               <p className="text-sm text-[#475569] mb-6 leading-relaxed">{primaryTier.summary}</p>
-              <div className="flex items-baseline gap-2.5 mb-6">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6">
                 <span className="font-display-studio text-4xl font-semibold tabular-nums text-[#0F172A]">
-                  $39 USD
+                  $24 USD
+                </span>
+                <span className="font-display-studio text-2xl font-semibold tabular-nums text-[#0F766E]">
+                  · TSh 67,500
                 </span>
                 <span className="text-sm text-[#64748B]">one-time payment on Selar</span>
               </div>
@@ -293,7 +372,7 @@ export function QuietPageStudioSalesPage({
                 rel="noopener noreferrer"
                 className="w-full py-3.5 px-5 text-sm font-semibold rounded-lg bg-[#0F766E] text-white hover:bg-[#115E59] transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
               >
-                <span>Get Instant Access on Selar — $39 USD</span>
+                <span>Get Instant Access on Selar — $24 USD (TSh 67,500)</span>
                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
               </a>
               <p className="text-center text-xs text-[#64748B]">
@@ -309,7 +388,7 @@ export function QuietPageStudioSalesPage({
                 {tpl.guaranteeTitle}
               </h3>
               <p className="text-sm text-[#475569] leading-relaxed">
-                Buy <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong> on Selar for $39 USD, customize your page, and download your HTML. If it does not save you hours or help you ship a cleaner, clearer sales page within 30 days, reply to your Selar receipt for a full refund.
+                Buy <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong> on Selar for $24 USD (TSh 67,500), customize your page, and download your HTML. If it does not save you hours or help you ship a cleaner, clearer sales page within 30 days, reply to your Selar receipt for a full refund.
               </p>
             </div>
             <div className="pt-5 border-t border-[#DCE4EE]">
@@ -321,7 +400,7 @@ export function QuietPageStudioSalesPage({
                 onClick={() => onLaunchBuilder()}
                 className="w-full py-2.5 px-4 text-xs font-semibold text-[#0F172A] bg-[#DCE5F0] hover:bg-[#CEDAE8] rounded-lg transition-colors cursor-pointer"
               >
-                Try the Live Builder Free
+                Preview Editor Free Before Paying
               </button>
             </div>
           </div>
@@ -375,10 +454,10 @@ export function QuietPageStudioSalesPage({
         <div className="p-8 md:p-10 rounded-xl border border-[#0F766E] bg-[#F4F7FA] flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="max-w-xl">
             <h2 className="font-display-studio text-2xl font-semibold tracking-tight text-[#0F172A] mb-2">
-              Ready to launch your sales page in 60 seconds?
+              Ready to build your sales page draft in minutes?
             </h2>
             <p className="text-sm text-[#475569] leading-relaxed">
-              Pay <strong className="font-bold text-[#0F172A]">$39 USD once</strong> on Selar to unlock <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong>, all 4 templates, and unlimited HTML downloads—with zero monthly fees.
+              Pay <strong className="font-bold text-[#0F172A]">$24 USD (TSh 67,500) once</strong> on Selar for instant email access to <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong>, all 4 editable templates, and standalone HTML downloads—with zero monthly fees.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -388,7 +467,7 @@ export function QuietPageStudioSalesPage({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg shadow-sm transition-colors whitespace-nowrap"
             >
-              <span>Get BiasharaBase Page Studio — $39 USD</span>
+              <span>Get BiasharaBase Page Studio — $24 USD (TSh 67,500)</span>
               <ExternalLink className="w-4 h-4" aria-hidden="true" />
             </a>
             <button
@@ -396,7 +475,7 @@ export function QuietPageStudioSalesPage({
               onClick={() => onLaunchBuilder()}
               className="inline-flex items-center gap-1.5 px-5 py-3.5 text-sm font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors whitespace-nowrap cursor-pointer"
             >
-              <span>Test Builder Free</span>
+              <span>Preview Builder Free</span>
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
@@ -440,7 +519,7 @@ export function QuietPageStudioSalesPage({
                     rel="noopener noreferrer"
                     className="px-4 py-2 text-xs font-semibold text-[#0F172A] bg-[#FAFCFE] border border-[#C4D0DC] hover:border-[#0F172A] rounded-lg transition-colors"
                   >
-                    Go to Selar Checkout ($39)
+                    Go to Selar Checkout ($24 / TSh 67,500)
                   </a>
                   <button
                     type="button"

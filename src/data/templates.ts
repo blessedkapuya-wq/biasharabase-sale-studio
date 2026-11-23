@@ -353,7 +353,7 @@ export const INITIAL_TEMPLATES: SalesTemplate[] = [
         id: 'qse-faq-1',
         question: 'Do I need coding skills to publish my page?',
         answer:
-          'No. Fill in your details, download the single HTML file, and drop it onto free hosting like Netlify Drop in under a minute.',
+          'No. Fill in your details, download the single HTML file, and drop it onto free hosting like Netlify Drop in minutes.',
       },
       {
         id: 'qse-faq-2',

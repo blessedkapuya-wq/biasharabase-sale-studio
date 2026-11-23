@@ -10,9 +10,11 @@ import {
   KeyRound,
   Receipt,
   Link2,
+  FolderArchive,
 } from 'lucide-react';
 import { SalesTemplate } from '../types/template';
 import { generateHtmlExport, embedImageAsDataUrl } from '../utils/exportCode';
+import { createSingleFileZipBlob } from '../utils/zipBuilder';
 
 interface UnlockSuccessDetails {
   token: string;
@@ -237,7 +239,21 @@ export function ExportCodeModal({
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = `${template.brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'sales-page'}.html`;
+    anchor.download = 'index.html';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadZip = () => {
+    if (!code || !isUnlocked) return;
+    const slug =
+      template.brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') ||
+      'sales-page';
+    const blob = createSingleFileZipBlob('index.html', code);
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${slug}-site.zip`;
     anchor.click();
     URL.revokeObjectURL(url);
   };
@@ -317,10 +333,19 @@ export function ExportCodeModal({
                   type="button"
                   onClick={handleDownload}
                   disabled={preparing || !code}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] rounded-lg transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#0F172A] bg-[#E2E9F2] hover:bg-[#D5DFEC] rounded-lg transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
                 >
                   <Download className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Download .html</span>
+                  <span>index.html</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadZip}
+                  disabled={preparing || !code}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] rounded-lg transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+                >
+                  <FolderArchive className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Download Publish ZIP</span>
                 </button>
               </>
             )}
@@ -343,7 +368,7 @@ export function ExportCodeModal({
                 <span>Free to preview · Instant unlock after Selar checkout</span>
               </div>
               <p className="text-xs text-[#475569] leading-relaxed">
-                Purchase <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong> once on Selar to activate unlimited HTML exports on up to 3 devices.
+                Purchase <strong className="font-bold text-[#0F172A]">BiasharaBase Page Studio</strong> once on Selar ($24 USD / TSh 67,500) to activate unlimited HTML exports on up to 3 devices.
               </p>
               <a
                 href={safeSelarUrl}
@@ -351,7 +376,7 @@ export function ExportCodeModal({
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 text-xs font-semibold text-white bg-[#0F766E] hover:bg-[#115E59] rounded-lg transition-colors flex items-center justify-center gap-2"
               >
-                <span>Buy on Selar & Unlock Instantly</span>
+                <span>Buy on Selar ($24 USD / TSh 67,500) & Unlock</span>
                 <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
               </a>
             </div>
@@ -492,26 +517,38 @@ export function ExportCodeModal({
               </div>
             )}
 
-            {/* 60-Second Publishing Guide */}
-            <div className="px-6 py-4 bg-[#EDF2F7] border-b border-[#DCE4EE] grid sm:grid-cols-3 gap-4 text-xs">
-              <div>
-                <div className="font-semibold text-[#0F172A] mb-0.5">01. Download the file</div>
-                <p className="text-[#475569]">
-                  Save the file to your computer. Your photo, styling, and form logic are bundled inside.
-                </p>
+            {/* Step-by-Step Publishing Guide */}
+            <div className="px-6 py-4 bg-[#EDF2F7] border-b border-[#DCE4EE] space-y-3 text-xs">
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <div className="font-semibold text-[#0F172A] mb-0.5">01. Download Publish ZIP</div>
+                  <p className="text-[#475569]">
+                    Includes <span className="font-medium">index.html</span> with your photo, styling, WhatsApp link, and form bundled inside.
+                  </p>
+                </div>
+                <div>
+                  <div className="font-semibold text-[#0F172A] mb-0.5">02. Drop onto any web host</div>
+                  <p className="text-[#475569]">
+                    Drag the ZIP onto Netlify Drop, Cloudflare Pages, or cPanel to put your page online in minutes.
+                  </p>
+                </div>
+                <div>
+                  <div className="font-semibold text-[#0F172A] mb-0.5">03. Share your live link</div>
+                  <p className="text-[#475569]">
+                    Paste your new URL into WhatsApp, Instagram bio, or ads and start collecting inquiries.
+                  </p>
+                </div>
               </div>
-              <div>
-                <div className="font-semibold text-[#0F172A] mb-0.5">02. Rename to index.html</div>
-                <p className="text-[#475569]">
-                  Put it inside a folder named <span className="font-medium">site</span> and rename it to <span className="font-medium">index.html</span>.
-                </p>
-              </div>
-              <div>
-                <div className="font-semibold text-[#0F172A] mb-0.5">03. Drop onto free hosting</div>
-                <p className="text-[#475569]">
-                  Drag the folder onto Netlify Drop or Cloudflare Pages to get a live shareable link in under a minute.
-                </p>
-              </div>
+              {(/kestrel-engine\.com|acme\.com|meridian-advisory\.com|bauer-precision\.com|ledgercheck\.io/i.test(
+                template.leadDestinationValue
+              ) ||
+                (!template.checkoutUrl?.trim() &&
+                  !template.mobileMoneyNote?.trim() &&
+                  !template.whatsappOrderNumber?.trim())) && (
+                <div className="px-3 py-2 rounded-lg bg-[#FEF3C7] border border-[#F59E0B]/40 text-[#92400E] text-[11px]">
+                  Tip before publishing: Make sure you updated the sample contact email/WhatsApp or payment details inside the editor.
+                </div>
+              )}
             </div>
 
             <div className="flex-1 overflow-auto bg-[#111317] p-6">
