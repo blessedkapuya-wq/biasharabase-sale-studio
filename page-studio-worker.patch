@@ -1,0 +1,542 @@
+diff --git a/.env.example b/.env.example
+index 2e83da1..fb26296 100644
+--- a/.env.example
++++ b/.env.example
+@@ -1,22 +1,22 @@
+-# GEMINI_API_KEY: Required for Gemini AI API calls.
+-# AI Studio automatically injects this at runtime from user secrets.
+-# Users configure this via the Secrets panel in the AI Studio UI.
+-GEMINI_API_KEY="MY_GEMINI_API_KEY"
+-
+-# APP_URL: The URL where this applet is hosted.
+-# AI Studio automatically injects this at runtime with the Cloud Run service URL.
+-# Used for self-referential links, OAuth callbacks, and API endpoints.
+-APP_URL="MY_APP_URL"
+-
+-# STUDIO_ACCESS_CODE: Private customer access code(s), comma-separated, given to paying Selar buyers.
+-# Change this from the starter code before sharing publicly.
+-STUDIO_ACCESS_CODE=""
+-
+-# STUDIO_TOKEN_SECRET: Required secret of at least 32 characters used to sign unlocked sessions.
+-STUDIO_TOKEN_SECRET=""
+-
+-# SELAR_WEBHOOK_SECRET: Secret sent in the Authorization: Bearer header by the purchase automation.
+-SELAR_WEBHOOK_SECRET=""
+-
+-# OWNER_ADMIN_EMAIL: Google email allowed to manage buyer licenses in the Owner panel.
+-OWNER_ADMIN_EMAIL="blessedkapuya@gmail.com"
++# GEMINI_API_KEY: Required for Gemini AI API calls.
++# AI Studio automatically injects this at runtime from user secrets.
++# Users configure this via the Secrets panel in the AI Studio UI.
++GEMINI_API_KEY="MY_GEMINI_API_KEY"
++
++# APP_URL: The URL where this applet is hosted.
++# AI Studio automatically injects this at runtime with the Cloud Run service URL.
++# Used for self-referential links, OAuth callbacks, and API endpoints.
++APP_URL="MY_APP_URL"
++
++# STUDIO_ACCESS_CODE: Private customer access code(s), comma-separated, given to paying Selar buyers.
++# Change this from the starter code before sharing publicly.
++STUDIO_ACCESS_CODE=""
++
++# STUDIO_TOKEN_SECRET: Required secret of at least 32 characters used to sign unlocked sessions.
++STUDIO_TOKEN_SECRET=""
++
++# SELAR_WEBHOOK_SECRET: Secret sent in the Authorization: Bearer header by the purchase automation.
++SELAR_WEBHOOK_SECRET=""
++
++# OWNER_ADMIN_EMAIL: Google email allowed to manage buyer licenses in the Owner panel.
++OWNER_ADMIN_EMAIL="blessedkapuya@gmail.com"
+diff --git a/.gitignore b/.gitignore
+index b63bf5e..9082a64 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,11 +1,11 @@
+-node_modules/
+-build/
+-dist/
+-coverage/
+-.DS_Store
+-*.log
+-.env*
+-!.env.example
++node_modules/
++build/
++dist/
++coverage/
++.DS_Store
++*.log
++.env*
++!.env.example
+ 
+ .dev.vars*
+-.wrangler/
++.wrangler/
+diff --git a/migrations/0001_licenses.sql b/migrations/0001_licenses.sql
+new file mode 100644
+index 0000000..b6d990b
+--- /dev/null
++++ b/migrations/0001_licenses.sql
+@@ -0,0 +1,30 @@
++CREATE TABLE IF NOT EXISTS users (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  uid TEXT NOT NULL UNIQUE,
++  email TEXT NOT NULL,
++  created_at INTEGER NOT NULL DEFAULT (unixepoch())
++);
++
++CREATE TABLE IF NOT EXISTS licenses (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  buyer_email TEXT NOT NULL,
++  buyer_name TEXT NOT NULL DEFAULT '',
++  selar_order_id TEXT NOT NULL UNIQUE,
++  license_key TEXT NOT NULL UNIQUE,
++  amount_paid TEXT NOT NULL DEFAULT '',
++  currency TEXT NOT NULL DEFAULT 'USD',
++  status TEXT NOT NULL DEFAULT 'active',
++  max_devices INTEGER NOT NULL DEFAULT 3,
++  source TEXT NOT NULL DEFAULT 'selar-webhook',
++  created_at INTEGER NOT NULL DEFAULT (unixepoch())
++);
++
++CREATE TABLE IF NOT EXISTS device_activations (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  license_id INTEGER NOT NULL REFERENCES licenses(id) ON DELETE CASCADE,
++  device_id TEXT NOT NULL,
++  user_agent TEXT NOT NULL DEFAULT '',
++  first_seen_at INTEGER NOT NULL DEFAULT (unixepoch()),
++  last_seen_at INTEGER NOT NULL DEFAULT (unixepoch()),
++  UNIQUE (license_id, device_id)
++);
+diff --git a/public/.assetsignore b/public/.assetsignore
+new file mode 100644
+index 0000000..93663b2
+--- /dev/null
++++ b/public/.assetsignore
+@@ -0,0 +1 @@
++assets/aistudio/Paste_November_23__2026_-_10_35AM_f6b32eae
+diff --git a/src/components/ExportCodeModal.tsx b/src/components/ExportCodeModal.tsx
+index 32e24a5..f4af4e4 100644
+--- a/src/components/ExportCodeModal.tsx
++++ b/src/components/ExportCodeModal.tsx
+@@ -13,7 +13,7 @@ import {
+   FolderArchive,
+ } from 'lucide-react';
+ import { SalesTemplate } from '../types/template';
+-import { generateHtmlExport, embedImageAsDataUrl } from '../utils/exportCode';
++import { embedImageAsDataUrl } from '../utils/exportCode';
+ import { createSingleFileZipBlob } from '../utils/zipBuilder';
+ 
+ interface UnlockSuccessDetails {
+@@ -78,27 +78,37 @@ export function ExportCodeModal({
+     let cancelled = false;
+     setPreparing(true);
+ 
+-    fetch('/api/access/status', {
+-      headers: { Authorization: `Bearer ${accessToken}` },
+-    })
+-      .then((res) => res.json())
+-      .then((data: { unlocked?: boolean }) => {
++    setCode('');
++    void (async () => {
++      try {
++        const heroImage = await embedImageAsDataUrl(template.heroImage);
+         if (cancelled) return;
+-        if (!data.unlocked) {
++        const res = await fetch('/api/exports/html', {
++          method: 'POST',
++          headers: {
++            Authorization: 'Bearer ' + accessToken,
++            'Content-Type': 'application/json',
++          },
++          body: JSON.stringify({ template: { ...template, heroImage } }),
++        });
++        if (cancelled) return;
++        if (!res.ok) {
+           onLock();
+-          setPreparing(false);
++          setVerifyError('Unable to prepare the export. Please unlock and try again.');
+           return;
+         }
+-        embedImageAsDataUrl(template.heroImage).then((embeddedSrc) => {
+-          if (cancelled) return;
+-          setCode(generateHtmlExport(template, embeddedSrc));
+-          setPreparing(false);
+-        });
+-      })
+-      .catch(() => {
+-        if (cancelled) return;
+-        setPreparing(false);
+-      });
++        const data = await res.json() as { html?: string };
++        if (typeof data.html !== 'string') throw new Error('Missing export');
++        if (!cancelled) setCode(data.html);
++      } catch {
++        if (!cancelled) {
++          onLock();
++          setVerifyError('Unable to prepare the export. Please try again.');
++        }
++      } finally {
++        if (!cancelled) setPreparing(false);
++      }
++    })();
+ 
+     return () => {
+       cancelled = true;
+@@ -302,7 +312,7 @@ export function ExportCodeModal({
+             </h2>
+             <p className="text-xs text-[#64748B] tabular-nums truncate">
+               {!isUnlocked
+-                ? `${template.brandName} · Verified Selar license required (up to 3 devices)`
++                ? `BiasharaBase Page Studio · Verified Selar license required (up to 3 devices)`
+                 : preparing
+                   ? 'Embedding photo and wiring lead form...'
+                   : `${template.brandName} · ${sizeKb} KB self-contained HTML · Inquiries wired to ${template.leadDestinationType}`}
+diff --git a/src/db/drizzle.config.ts b/src/db/drizzle.config.ts
+deleted file mode 100644
+index 22461cc..0000000
+--- a/src/db/drizzle.config.ts
++++ /dev/null
+@@ -1,37 +0,0 @@
+-import { defineConfig } from 'drizzle-kit';
+-import * as dotenv from 'dotenv';
+-
+-dotenv.config();
+-
+-const sqlHost = process.env.SQL_HOST;
+-const sqlDbName = process.env.SQL_DB_NAME;
+-const user = process.env.SQL_ADMIN_USER;
+-const password = process.env.SQL_ADMIN_PASSWORD;
+-
+-if (!sqlHost) {
+-  throw new Error('SQL_HOST must be set in environment variables.');
+-}
+-if (!sqlDbName) {
+-  throw new Error('SQL_DB_NAME must be set in environment variables.');
+-}
+-if (!user) {
+-  throw new Error('SQL_ADMIN_USER must be set in environment variables.');
+-}
+-if (!password) {
+-  throw new Error('SQL_ADMIN_PASSWORD must be set in environment variables.');
+-}
+-
+-export default defineConfig({
+-  schema: './src/db/schema.ts',
+-  out: './drizzle',
+-  dialect: 'postgresql',
+-  schemaFilter: ['public'],
+-  dbCredentials: {
+-    host: sqlHost,
+-    user,
+-    password,
+-    database: sqlDbName,
+-    ssl: false,
+-  },
+-  verbose: true,
+-});
+diff --git a/src/db/index.ts b/src/db/index.ts
+index 458621e..4b8fcb8 100644
+--- a/src/db/index.ts
++++ b/src/db/index.ts
+@@ -1,29 +1,5 @@
+-import { drizzle } from 'drizzle-orm/node-postgres';
+-import { Pool } from 'pg';
++import { env } from 'cloudflare:workers';
++import { drizzle } from 'drizzle-orm/d1';
+ import * as schema from './schema.ts';
+ 
+-declare global {
+-  var _postgresPool: Pool | undefined;
+-}
+-
+-export const createPool = () => {
+-  if (!global._postgresPool) {
+-    global._postgresPool = new Pool({
+-      host: process.env.SQL_HOST,
+-      user: process.env.SQL_USER,
+-      password: process.env.SQL_PASSWORD,
+-      database: process.env.SQL_DB_NAME,
+-      max: 10,
+-      connectionTimeoutMillis: 15000,
+-    });
+-
+-    global._postgresPool.on('error', (err) => {
+-      console.error('Unexpected error on idle SQL pool client:', err);
+-    });
+-  }
+-  return global._postgresPool;
+-};
+-
+-const pool = createPool();
+-
+-export const db = drizzle(pool, { schema });
++export const db = drizzle(env.DB, { schema });
+diff --git a/src/db/licenses.ts b/src/db/licenses.ts
+index c80638f..d7a29ce 100644
+--- a/src/db/licenses.ts
++++ b/src/db/licenses.ts
+@@ -22,9 +22,9 @@ export interface LicenseWithDeviceCount extends LicenseRecord {
+ }
+ 
+ export function generatePersonalLicenseKey(): string {
+-  const seg1 = crypto.randomBytes(2).toString('hex').toUpperCase();
+-  const seg2 = crypto.randomBytes(2).toString('hex').toUpperCase();
+-  const seg3 = crypto.randomBytes(2).toString('hex').toUpperCase();
++  const seg1 = crypto.randomBytes(6).toString('hex').toUpperCase();
++  const seg2 = crypto.randomBytes(6).toString('hex').toUpperCase();
++  const seg3 = crypto.randomBytes(6).toString('hex').toUpperCase();
+   return `BBPS-${seg1}-${seg2}-${seg3}`;
+ }
+ 
+@@ -152,71 +152,38 @@ export async function activateDeviceForLicense(input: {
+   }
+ 
+   try {
+-    const existing = await db
+-      .select()
+-      .from(deviceActivations)
+-      .where(
+-        and(
+-          eq(deviceActivations.licenseId, license.id),
+-          eq(deviceActivations.deviceId, deviceId)
++    // Keep the count and conditional write in one statement so concurrent
++    // requests cannot claim the same remaining slot.
++    const result = await db.run(sql`
++      INSERT INTO device_activations (license_id, device_id, user_agent)
++      SELECT id, ${deviceId}, ${userAgent.slice(0, 240)}
++      FROM licenses
++      WHERE id = ${license.id} AND status = 'active'
++        AND (
++          EXISTS (
++            SELECT 1 FROM device_activations
++            WHERE license_id = licenses.id AND device_id = ${deviceId}
++          ) OR (
++            SELECT count(*) FROM device_activations WHERE license_id = licenses.id
++          ) < max_devices
+         )
+-      )
+-      .limit(1);
+-
+-    if (existing[0]) {
+-      await db
+-        .update(deviceActivations)
+-        .set({
+-          lastSeenAt: new Date(),
+-          userAgent: userAgent.slice(0, 240),
+-        })
+-        .where(eq(deviceActivations.id, existing[0].id));
+-
+-      const countRows = await db
+-        .select({ count: sql<number>`count(*)::int` })
+-        .from(deviceActivations)
+-        .where(eq(deviceActivations.licenseId, license.id));
+-
+-      return {
+-        allowed: true,
+-        deviceCount: countRows[0]?.count ?? 1,
+-        maxDevices: license.maxDevices,
+-      };
+-    }
+-
+-    const countRows = await db
+-      .select({ count: sql<number>`count(*)::int` })
++      ON CONFLICT (license_id, device_id)
++      DO UPDATE SET last_seen_at = unixepoch(), user_agent = excluded.user_agent
++    `);
++    const [{ count: deviceCount }] = await db
++      .select({ count: sql<number>`count(*)` })
+       .from(deviceActivations)
+       .where(eq(deviceActivations.licenseId, license.id));
+-
+-    const currentCount = countRows[0]?.count ?? 0;
+-
+-    if (currentCount >= license.maxDevices) {
+-      return {
+-        allowed: false,
+-        reason: `This license has reached its ${license.maxDevices}-device limit (${currentCount}/${license.maxDevices} browsers active). Contact blessedkapuya@gmail.com if you need a device reset.`,
+-        deviceCount: currentCount,
+-        maxDevices: license.maxDevices,
+-      };
++    const current = await findLicenseById(license.id);
++    const maxDevices = current?.maxDevices ?? license.maxDevices;
++    if (result.meta.changes > 0 && current?.status === 'active') {
++      return { allowed: true, deviceCount, maxDevices };
+     }
+ 
+-    await db
+-      .insert(deviceActivations)
+-      .values({
+-        licenseId: license.id,
+-        deviceId,
+-        userAgent: userAgent.slice(0, 240),
+-      })
+-      .onConflictDoUpdate({
+-        target: [deviceActivations.licenseId, deviceActivations.deviceId],
+-        set: { lastSeenAt: new Date() },
+-      });
+-
+-    return {
+-      allowed: true,
+-      deviceCount: currentCount + 1,
+-      maxDevices: license.maxDevices,
+-    };
++    const reason = current?.status === 'active'
++      ? `This license has reached its ${maxDevices}-device limit (${deviceCount}/${maxDevices} browsers active). Contact blessedkapuya@gmail.com if you need a device reset.`
++      : 'This license has been revoked or deactivated. Contact blessedkapuya@gmail.com for help.';
++    return { allowed: false, reason, deviceCount, maxDevices };
+   } catch (error) {
+     console.error('Database device activation failed:', error);
+     throw new Error('Failed to activate device. Please try again later.', {
+@@ -272,7 +239,7 @@ export async function listLicensesWithCounts(): Promise<
+         maxDevices: licenses.maxDevices,
+         source: licenses.source,
+         createdAt: licenses.createdAt,
+-        deviceCount: sql<number>`count(${deviceActivations.id})::int`,
++        deviceCount: sql<number>`count(${deviceActivations.id})`,
+       })
+       .from(licenses)
+       .leftJoin(deviceActivations, eq(licenses.id, deviceActivations.licenseId))
+diff --git a/src/db/schema.ts b/src/db/schema.ts
+index 5fbc22c..103809d 100644
+--- a/src/db/schema.ts
++++ b/src/db/schema.ts
+@@ -1,22 +1,20 @@
+-import { relations } from 'drizzle-orm';
++import { relations, sql } from 'drizzle-orm';
+ import {
+   integer,
+-  pgTable,
+-  serial,
++  sqliteTable,
+   text,
+-  timestamp,
+   uniqueIndex,
+-} from 'drizzle-orm/pg-core';
++} from 'drizzle-orm/sqlite-core';
+ 
+-export const users = pgTable('users', {
+-  id: serial('id').primaryKey(),
++export const users = sqliteTable('users', {
++  id: integer('id').primaryKey({ autoIncrement: true }),
+   uid: text('uid').notNull().unique(),
+   email: text('email').notNull(),
+-  createdAt: timestamp('created_at').defaultNow().notNull(),
++  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+ });
+ 
+-export const licenses = pgTable('licenses', {
+-  id: serial('id').primaryKey(),
++export const licenses = sqliteTable('licenses', {
++  id: integer('id').primaryKey({ autoIncrement: true }),
+   buyerEmail: text('buyer_email').notNull(),
+   buyerName: text('buyer_name').notNull().default(''),
+   selarOrderId: text('selar_order_id').notNull().unique(),
+@@ -26,20 +24,20 @@ export const licenses = pgTable('licenses', {
+   status: text('status').notNull().default('active'),
+   maxDevices: integer('max_devices').notNull().default(3),
+   source: text('source').notNull().default('selar-webhook'),
+-  createdAt: timestamp('created_at').defaultNow().notNull(),
++  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+ });
+ 
+-export const deviceActivations = pgTable(
++export const deviceActivations = sqliteTable(
+   'device_activations',
+   {
+-    id: serial('id').primaryKey(),
++    id: integer('id').primaryKey({ autoIncrement: true }),
+     licenseId: integer('license_id')
+       .references(() => licenses.id, { onDelete: 'cascade' })
+       .notNull(),
+     deviceId: text('device_id').notNull(),
+     userAgent: text('user_agent').notNull().default(''),
+-    firstSeenAt: timestamp('first_seen_at').defaultNow().notNull(),
+-    lastSeenAt: timestamp('last_seen_at').defaultNow().notNull(),
++    firstSeenAt: integer('first_seen_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
++    lastSeenAt: integer('last_seen_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+   },
+   (table) => [
+     uniqueIndex('device_activations_license_device_idx').on(
+diff --git a/tsconfig.json b/tsconfig.json
+index 4d565f4..e734c1c 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -1,29 +1,29 @@
+-{
+-  "compilerOptions": {
+-    "target": "ES2022",
+-    "experimentalDecorators": true,
+-    "useDefineForClassFields": false,
+-    "module": "ESNext",
+-    "types": ["vite/client", "node", "@cloudflare/workers-types"],
+-    "lib": [
+-      "ES2022",
+-      "DOM",
+-      "DOM.Iterable"
+-    ],
+-    "skipLibCheck": true,
+-    "moduleResolution": "bundler",
+-    "isolatedModules": true,
+-    "moduleDetection": "force",
+-    "allowJs": true,
+-    "jsx": "react-jsx",
+-    "paths": {
+-      "@/*": [
+-        "./*"
+-      ]
+-    },
+-    "allowImportingTsExtensions": true,
+-    "resolveJsonModule": true,
+-    "noEmit": true
+-  },
+-  "exclude": ["dist"]
+-}
++{
++  "compilerOptions": {
++    "target": "ES2022",
++    "experimentalDecorators": true,
++    "useDefineForClassFields": false,
++    "module": "ESNext",
++    "types": ["vite/client", "node", "@cloudflare/workers-types"],
++    "lib": [
++      "ES2022",
++      "DOM",
++      "DOM.Iterable"
++    ],
++    "skipLibCheck": true,
++    "moduleResolution": "bundler",
++    "isolatedModules": true,
++    "moduleDetection": "force",
++    "allowJs": true,
++    "jsx": "react-jsx",
++    "paths": {
++      "@/*": [
++        "./*"
++      ]
++    },
++    "allowImportingTsExtensions": true,
++    "resolveJsonModule": true,
++    "noEmit": true
++  },
++  "exclude": ["dist"]
++}
+diff --git a/worker-env.d.ts b/worker-env.d.ts
+index 23e458e..19a4385 100644
+--- a/worker-env.d.ts
++++ b/worker-env.d.ts
+@@ -1,3 +1,3 @@
+ interface Env {
+   DB: D1Database;
+-}
++}
+diff --git a/worker.ts b/worker.ts
+index e9ae460..fba3d23 100644
+--- a/worker.ts
++++ b/worker.ts
+@@ -2,4 +2,4 @@ import http from 'node:http';
+ import { httpServerHandler } from 'cloudflare:node';
+ import { createApp } from './server.ts';
+ 
+-export default httpServerHandler(http.createServer(createApp()));
++export default httpServerHandler(http.createServer(createApp()));
