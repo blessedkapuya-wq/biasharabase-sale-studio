@@ -1,8 +1,5 @@
-import 'dotenv/config';
+import { generateHtmlExport } from './src/utils/exportCode.ts';
 import crypto from 'node:crypto';
-import fs from 'node:fs';
-import http from 'node:http';
-import path from 'node:path';
 import express from 'express';
 import type { Request, Response } from 'express';
 import {
@@ -18,10 +15,8 @@ import {
 } from './src/db/licenses.ts';
 import { requireOwnerAuth, type AuthRequest } from './src/middleware/auth.ts';
 
-const PORT = Number(process.env.PORT) || 3000;
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-const DEFAULT_APP_URL =
-  'https://ais-pre-fsfsgf7dzzvymds4k2bdzx-975042813454.europe-west2.run.app';
+const DEFAULT_APP_URL = 'http://localhost:8787';
 
 interface SessionTokenPayload {
   scope: 'html-export';
@@ -54,19 +49,13 @@ function getAllowedAccessCodes(): string[] {
 }
 
 function getSigningSecret(): string {
-  return (
-    process.env.STUDIO_TOKEN_SECRET ||
-    process.env.STUDIO_ACCESS_CODE ||
-    'biasharabase-studio-signing-key-v1'
-  );
+  const secret = process.env.STUDIO_TOKEN_SECRET;
+  if (!secret || secret.length < 32) throw new Error('STUDIO_TOKEN_SECRET must be at least 32 characters.');
+  return secret;
 }
 
 function getWebhookSecret(): string {
-  return (
-    process.env.SELAR_WEBHOOK_SECRET ||
-    process.env.STUDIO_TOKEN_SECRET ||
-    ''
-  ).trim();
+  return (process.env.SELAR_WEBHOOK_SECRET || '').trim();
 }
 
 function safeCompare(a: string, b: string): boolean {
@@ -367,10 +356,15 @@ function buildWelcomePdfBuffer(studioUrl: string, accessCode: string): Buffer {
   return Buffer.concat([...parts, xrefBuf, trailerBuf]);
 }
 
-async function startServer() {
+export function createApp() {
   const app = express();
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: true }));
+  app.disable('x-powered-by');
+  app.use('/api', (_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
 
   app.get('/favicon.ico', (_req: Request, res: Response) => {
     res.status(204).end();
@@ -379,15 +373,8 @@ async function startServer() {
   // Selar "New Sale" Webhook Receiver
   app.post('/api/selar-webhook', async (req: Request, res: Response) => {
     const expectedSecret = getWebhookSecret();
-    const providedSecret =
-      (typeof req.query.secret === 'string' ? req.query.secret : '') ||
-      (typeof req.headers['x-webhook-secret'] === 'string'
-        ? req.headers['x-webhook-secret']
-        : '') ||
-      extractBearerToken(req) ||
-      '';
-
-    if (!expectedSecret || !providedSecret || !safeCompare(providedSecret, expectedSecret)) {
+    const providedSecret = extractBearerToken(req) || '';
+    if (expectedSecret.length < 32 || !safeCompare(providedSecret, expectedSecret)) {
       res.status(401).json({ error: 'Invalid webhook secret.' });
       return;
     }
@@ -403,11 +390,10 @@ async function startServer() {
       'transaction_status',
     ]).toLowerCase();
 
-    if (
-      rawStatus &&
-      ['failed', 'cancelled', 'canceled', 'abandoned', 'pending'].includes(rawStatus)
-    ) {
-      res.json({ ok: true, ignored: true, reason: `Status ${rawStatus} ignored.` });
+    const product = extractSelarField(body, ['product_reference', 'product_id']);
+    if (!['paid', 'success', 'successful', 'completed'].includes(rawStatus) ||
+        !['n57778lu4q', '1843843'].includes(product)) {
+      res.json({ ok: true, ignored: true, reason: 'Expected a paid Page Studio order.' });
       return;
     }
 
@@ -432,7 +418,11 @@ async function startServer() {
       'id',
     ]);
     const amountPaid = extractSelarField(body, ['amount', 'price', 'total']);
-    const currency = extractSelarField(body, ['currency']) || 'USD';
+    const currency = extractSelarField(body, ['currency']).toUpperCase();
+    if (!['USD', 'TZS'].includes(currency) || !Number.isFinite(Number(amountPaid)) || Number(amountPaid) <= 0) {
+      res.status(400).json({ error: 'A positive Page Studio payment amount and currency are required.' });
+      return;
+    }
 
     if (!buyerEmail || !selarOrderId) {
       res.status(400).json({
@@ -656,6 +646,31 @@ async function startServer() {
     }
   });
 
+  app.post('/api/exports/html', async (req: Request, res: Response) => {
+    try {
+      const session = await verifySessionToken(extractBearerToken(req));
+      if (!session.valid) {
+        res.status(401).json({ error: 'Unlock Page Studio to export your page.' });
+        return;
+      }
+      const template = req.body?.template;
+      if (!template || typeof template !== 'object' || Array.isArray(template)) {
+        res.status(400).json({ error: 'A valid template is required.' });
+        return;
+      }
+      let html: string;
+      try {
+        html = generateHtmlExport(template);
+      } catch {
+        res.status(400).json({ error: 'This template could not be exported.' });
+        return;
+      }
+      res.json({ html });
+    } catch {
+      res.status(503).json({ error: 'Export is temporarily unavailable.' });
+    }
+  });
+
   app.get('/api/welcome-pdf', async (req: Request, res: Response) => {
     try {
       const token = extractBearerToken(req);
@@ -689,10 +704,7 @@ async function startServer() {
     try {
       const rows = await listLicensesWithCounts();
       const baseUrl = getAppBaseUrl();
-      const webhookSecret = getWebhookSecret();
-      const webhookUrl = webhookSecret
-        ? `${baseUrl}/api/selar-webhook?secret=${encodeURIComponent(webhookSecret)}`
-        : `${baseUrl}/api/selar-webhook`;
+      const webhookUrl = baseUrl + '/api/selar-webhook';
       const redirectUrl = `${baseUrl}/?paid=1`;
 
       res.json({
@@ -795,35 +807,5 @@ async function startServer() {
     }
   );
 
-  const httpServer = http.createServer(app);
-  const isProduction = process.env.NODE_ENV === 'production';
-  const distDir = path.resolve(process.cwd(), 'dist');
-
-  if (isProduction && fs.existsSync(distDir)) {
-    app.use(express.static(distDir));
-    app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.join(distDir, 'index.html'));
-    });
-  } else {
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: {
-        middlewareMode: true,
-        hmr: false,
-        allowedHosts: true,
-        ws: { server: httpServer },
-      },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  }
-
-  httpServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`BiasharaBase Page Studio running on http://0.0.0.0:${PORT}`);
-  });
+  return app;
 }
-
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
